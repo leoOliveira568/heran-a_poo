@@ -1,0 +1,137 @@
+abstract class Cliente {
+    protected String nome;
+    protected String endereco;
+
+    public Cliente(String nome, String endereco) {
+        this.nome = nome;
+        this.endereco = endereco;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+}
+
+class PessoaFisica extends Cliente {
+    private String cpf;
+
+    public PessoaFisica(String nome, String endereco, String cpf) {
+        super(nome, endereco);
+        this.cpf = cpf;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+}
+
+class PessoaJuridica extends Cliente {
+    private String cnpj;
+
+    public PessoaJuridica(String nome, String endereco, String cnpj) {
+        super(nome, endereco);
+        this.cnpj = cnpj;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+}
+
+abstract class Conta {
+    protected Cliente cliente;
+    protected double saldo;
+
+    public Conta(Cliente cliente) {
+        this.cliente = cliente;
+        this.saldo = 0.0;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public abstract void depositar(double valor);
+
+    public abstract void sacar(double valor);
+}
+
+class ContaCorrente extends Conta {
+    public ContaCorrente(Cliente cliente) {
+        super(cliente);
+    }
+
+    @Override
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+
+    @Override
+    public void sacar(double valor) {
+        if (saldo - valor >= 0) {
+            saldo -= valor;
+        }
+    }
+}
+
+class ContaEspecial extends Conta {
+    private double chequeEspecial;
+
+    public ContaEspecial(Cliente cliente, double chequeEspecial) {
+        super(cliente);
+        this.chequeEspecial = chequeEspecial;
+    }
+
+    @Override
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+
+    @Override
+    public void sacar(double valor) {
+        if (saldo - valor >= -chequeEspecial) {
+            saldo -= valor;
+        }
+    }
+}
+
+class ContaPoupanca extends Conta {
+    public ContaPoupanca(Cliente cliente) {
+        super(cliente);
+    }
+
+    @Override
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+
+    @Override
+    public void sacar(double valor) {
+        
+    }
+
+    public void rendimento() {
+        saldo += saldo * 0.005;
+    }
+}
+
+class ContaEmpresarial extends ContaEspecial {
+    public ContaEmpresarial(Cliente cliente, double chequeEspecial) {
+        super(cliente, chequeEspecial);
+    }
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+        Cliente cliente = new PessoaFisica("Individuo", "Rua X", "123.435.749-00");
+        ContaCorrente conta = new ContaCorrente(cliente);
+        conta.depositar(1400.0);
+        conta.sacar(700.0);
+        System.out.println("Saldo: " + conta.getSaldo());
+    }
+}
